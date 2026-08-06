@@ -1,3 +1,10 @@
+## 11.8.2.1
+  - LOCAL FORK (not published upstream): add `message_headers_field` option to the output plugin.
+    Reads a hash from the referenced event field (e.g. `[@metadata][kafka][headers]` populated by the
+    input's `decorate_events => extended`) and adds each entry as a Kafka message header, appended
+    after `message_headers` (Kafka allows duplicate header names, matching Java client `Headers.add`
+    semantics). Entries with an empty key or nil value, and non-scalar values, are skipped.
+
 ## 11.8.2
   - Upgrade transitive `org.apache.commons:commons-lang3` dependency [#217](https://github.com/logstash-plugins/logstash-integration-kafka/pull/217)
 

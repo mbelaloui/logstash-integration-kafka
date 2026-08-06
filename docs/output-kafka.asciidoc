@@ -109,6 +109,7 @@ See the https://kafka.apache.org/{kafka_client_doc}/documentation for more detai
 | <<plugins-{type}s-{plugin}-linger_ms>> |<<number,number>>|No
 | <<plugins-{type}s-{plugin}-max_request_size>> |<<number,number>>|No
 | <<plugins-{type}s-{plugin}-message_headers>> |<<hash,hash>>|No
+| <<plugins-{type}s-{plugin}-message_headers_field>> |<<string,string>>|No
 | <<plugins-{type}s-{plugin}-message_key>> |<<string,string>>|No
 | <<plugins-{type}s-{plugin}-metadata_fetch_timeout_ms>> |<<number,number>>|No
 | <<plugins-{type}s-{plugin}-metadata_max_age_ms>> |<<number,number>>|No
@@ -318,6 +319,28 @@ Example:
 ----------------------------------
     message_headers => { "event_timestamp" => "%{@timestamp}" }
 ----------------------------------
+
+[id="plugins-{type}s-{plugin}-message_headers_field"]
+===== `message_headers_field`
+
+  * Value type is <<string,string>>
+  * There is no default value for this setting.
+
+A {logstash-ref}/field-references-deepdive.html[field reference] to a hash whose entries are each added to the message
+as a Kafka header. Header names are the hash keys, header values are taken from the hash values.
+This allows forwarding a set of headers that is not known in advance, for example to mirror the
+headers of a consumed Kafka record captured by the kafka input's
+`decorate_events => extended` mode:
+[source,ruby]
+----------------------------------
+    message_headers_field => "[@metadata][kafka][headers]"
+----------------------------------
+
+Headers from this setting are appended after the ones from `message_headers`. Kafka allows several
+headers with the same name, so a name present in both settings results in two headers on the record.
+Entries with an empty key or a `nil` value, and values that are not scalar (nested hashes or arrays),
+are skipped. If the referenced field is absent the event is sent without additional headers; if it
+does not contain a hash, a warning is logged and the field is ignored.
 
 [id="plugins-{type}s-{plugin}-message_key"]
 ===== `message_key` 
